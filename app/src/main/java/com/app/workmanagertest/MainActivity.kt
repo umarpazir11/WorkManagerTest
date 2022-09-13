@@ -18,6 +18,7 @@ import com.app.workmanagertest.ui.theme.WorkManagerTestTheme
 import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
+    private lateinit var workRequest: WorkRequest //OneTimeWorkRequestBuilder<MyBackgroundWorker>().build() //.setConstraints(uploadDataConstraints)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -37,7 +38,7 @@ class MainActivity : ComponentActivity() {
          * periodicWorkRequest and OneTimeWork
          */
         //val periodicWorkRequest = PeriodicWorkRequestBuilder<MyBackgroundWorker>(24, TimeUnit.HOURS).build()
-        val workRequest = OneTimeWorkRequestBuilder<MyBackgroundWorker>().build() //  .setConstraints(uploadDataConstraints)
+        workRequest = OneTimeWorkRequestBuilder<MyBackgroundWorker>().build() //  .setConstraints(uploadDataConstraints)
         WorkManager.getInstance(this).enqueue(workRequest);
 
         /**
@@ -66,6 +67,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        WorkManager.getInstance().cancelWorkById(workRequest.id)
     }
 }
 
